@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.hbird.camel.nettyclient.handlers.SimpleCamelForwarderClientHandler;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -38,11 +39,12 @@ public class NettyClientConsumer extends DefaultConsumer {
 
 	private final NettyClientEndpoint endpoint;
 
-	private NettyClientConfiguration configuration;
+	private final NettyClientConfiguration configuration;
 
-	public NettyClientConsumer(final NettyClientEndpoint endpoint, final Processor processor) {
+	public NettyClientConsumer(final NettyClientEndpoint endpoint, final Processor processor, final NettyClientConfiguration configuration) {
 		super(endpoint, processor);
 		this.endpoint = endpoint;
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -69,7 +71,7 @@ public class NettyClientConsumer extends DefaultConsumer {
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
 			public ChannelPipeline getPipeline() {
-				return Channels.pipeline(new RawClientHandler(NettyClientConsumer.this));
+				return Channels.pipeline(new SimpleCamelForwarderClientHandler(NettyClientConsumer.this));
 			}
 		});
 

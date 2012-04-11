@@ -26,7 +26,11 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class NettyClientEndpoint extends DefaultEndpoint {
 
-    public NettyClientEndpoint() {
+	private NettyClientConfiguration configuration;
+
+    public NettyClientEndpoint(final String uri, final NettyClientComponent component, final NettyClientConfiguration config) {
+    	super(uri, component);
+    	configuration = config;
     }
 
     public NettyClientEndpoint(final String uri, final NettyClientComponent component) {
@@ -40,7 +44,7 @@ public class NettyClientEndpoint extends DefaultEndpoint {
 
     @Override
 	public Consumer createConsumer(final Processor processor) throws Exception {
-        return new NettyClientConsumer(this, processor);
+        return new NettyClientConsumer(this, processor, configuration);
     }
 
     @Override
