@@ -15,10 +15,9 @@ public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
 	public ClientPipelineFactory() {
 	}
 
-	public ClientPipelineFactory(final NettyClientConsumer consumer, final Exchange exchange, final AsyncCallback callback) {
+	public ClientPipelineFactory(final NettyClientConsumer consumer, final Exchange exchange) {
 		this.consumer = consumer;
 		this.exchange = exchange;
-		this.callback = callback;
 	}
 
 	@Override
@@ -42,13 +41,4 @@ public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
 	public void setExchange(final Exchange exchange) {
 		this.exchange = exchange;
 	}
-
-	public AsyncCallback getCallback() {
-		return callback;
-	}
-
-	public void setCallback(final AsyncCallback callback) {
-		this.callback = callback;
-	}
-
 }

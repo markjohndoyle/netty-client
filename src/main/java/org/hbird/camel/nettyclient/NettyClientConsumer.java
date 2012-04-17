@@ -21,12 +21,9 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.hbird.camel.nettyclient.handlers.SimpleCamelForwarderClientHandler;
+import org.hbird.camel.nettyclient.pipelines.DefaultClientPipelineFactory;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +64,8 @@ public class NettyClientConsumer extends DefaultConsumer {
 
 		final ClientBootstrap bootstrap = new ClientBootstrap(factory);
 
-		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-			@Override
-			public ChannelPipeline getPipeline() {
-				return Channels.pipeline(new SimpleCamelForwarderClientHandler(NettyClientConsumer.this));
-			}
-		});
+		final DefaultClientPipelineFactory defaultPipelineFactory = new DefaultClientPipelineFactory(this, getEndpoint().createExchange());
+		bootstrap.setPipelineFactory(defaultPipelineFactory);
 
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);

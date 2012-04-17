@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 public class SimpleCamelForwarderClientHandler extends SimpleChannelHandler {
 	private static final transient Logger LOG = LoggerFactory.getLogger(SimpleCamelForwarderClientHandler.class);
 	private final NettyClientConsumer consumer;
+	private final Exchange exchange;
 
-	public SimpleCamelForwarderClientHandler(final NettyClientConsumer nettyClientConsumer) {
+	public SimpleCamelForwarderClientHandler(final NettyClientConsumer nettyClientConsumer, final Exchange exchange) {
 		this.consumer = nettyClientConsumer;
+		this.exchange = exchange;
 	}
 
 	@Override
@@ -24,9 +26,10 @@ public class SimpleCamelForwarderClientHandler extends SimpleChannelHandler {
 		final ChannelBuffer buf = (ChannelBuffer) e.getMessage();
 		final byte[] incomingByteArray = buf.array();
 
-		LOG.debug("Incoming byte array size: " + incomingByteArray.length);
+		if(LOG.isDebugEnabled()) {
+			LOG.debug("Incoming byte array size: " + incomingByteArray.length);
+		}
 
-		final Exchange exchange = consumer.getEndpoint().createExchange();
 		exchange.setPattern(ExchangePattern.OutOnly);
 		exchange.getIn().setBody(incomingByteArray);
 
@@ -42,7 +45,7 @@ public class SimpleCamelForwarderClientHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext ctx, final ExceptionEvent e) {
-		LOG.debug(e.getCause().getStackTrace().toString());
+		e.getCause().printStackTrace();
 		e.getChannel().close();
 	}
 
