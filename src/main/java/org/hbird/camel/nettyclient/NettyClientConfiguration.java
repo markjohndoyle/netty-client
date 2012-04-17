@@ -1,9 +1,13 @@
 package org.hbird.camel.nettyclient;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +18,8 @@ public class NettyClientConfiguration implements Cloneable {
 	private String host;
 	private int port;
 
+	private List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
+
 	/**
 	 * Returns a copy of this configuration
 	 */
@@ -21,6 +27,8 @@ public class NettyClientConfiguration implements Cloneable {
 		try {
 			final NettyClientConfiguration answer = (NettyClientConfiguration) clone();
 			// Do any deep clone work here, Collection management etc.
+			final List<ChannelUpstreamHandler> decodersCopy = new ArrayList<ChannelUpstreamHandler>(decoders);
+			answer.setDecoders(decodersCopy);
 			return answer;
 		} catch (final CloneNotSupportedException e) {
 			throw new RuntimeCamelException(e);
@@ -38,6 +46,28 @@ public class NettyClientConfiguration implements Cloneable {
 		this.host = uri.getHost();
 		this.port = uri.getPort();
 
+		// Get list of registry based beans representing ChannelUpstreamHandlers, i.e., decoders.
+		final List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelUpstreamHandler.class, null);
+		if(LOG.isDebugEnabled()) {
+			if(referencedDecoders != null) {
+				LOG.debug("Discovered the following " + referencedDecoders.size() + " decoder(s): " + StringUtils.join(referencedDecoders.toArray(), ","));
+			}
+			else {
+				LOG.debug("Discovered 0 decoders");
+			}
+		}
+		NettyClientConfiguration.addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
+	}
+
+	private static <T> void addToHandlersList(final List<T> configured, final List<T> handlers, final Class<T> handlerType) {
+		if (handlers != null) {
+			for (int x = 0; x < handlers.size(); x++) {
+				final T handler = handlers.get(x);
+				if (handlerType.isInstance(handler)) {
+					configured.add(handler);
+				}
+			}
+		}
 	}
 
 	public boolean isTcp() {
@@ -75,6 +105,16 @@ public class NettyClientConfiguration implements Cloneable {
 
 	public void setPort(final int port) {
 		this.port = port;
+	}
+
+
+	public List<ChannelUpstreamHandler> getDecoders() {
+		return decoders;
+	}
+
+
+	public void setDecoders(final List<ChannelUpstreamHandler> decoders) {
+		this.decoders = decoders;
 	}
 
 }

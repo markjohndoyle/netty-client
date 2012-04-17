@@ -57,7 +57,6 @@ public class NettyClientConsumer extends DefaultConsumer {
 			initializeTCPClientSocketCommunicationLayer();
 		}
 		else {
-			initializeUDPClientSocketCommunicationLayer();
 		}
 
 		LOG.info("Netty consumer bound to: " + configuration.getAddress());
@@ -88,9 +87,7 @@ public class NettyClientConsumer extends DefaultConsumer {
 
 	@Override
 	protected void doStop() throws Exception {
-		// TODO Auto-generated method stub
-		// super.doStop();
-		throw new UnsupportedOperationException();
+		super.doStop();
 	}
 
 }
