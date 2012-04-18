@@ -22,7 +22,6 @@ import java.net.Socket;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 
 public class NettyClientComponentTest extends CamelTestSupport {
@@ -30,8 +29,8 @@ public class NettyClientComponentTest extends CamelTestSupport {
 	private ServerSocket serverSocket;
 	private static final int TEST_PORT = 4444;
 
-	@Before
-	public void setUpSockets() throws Exception {
+	@Override
+	public void doPreSetup() throws Exception {
 		serverSocket = new ServerSocket(TEST_PORT);
 	}
 

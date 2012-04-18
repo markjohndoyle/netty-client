@@ -11,7 +11,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
-import org.junit.Before;
 import org.junit.Test;
 
 public class NettyClientComponentDecodersTest extends CamelTestSupport {
@@ -20,8 +19,8 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 
 	public static final int TEST_PORT = 4444;
 
-	@Before
-	public void setUpSockets() throws Exception {
+	@Override
+	public void doPreSetup() throws Exception {
 		serverSocket = new ServerSocket(TEST_PORT);
 	}
 
