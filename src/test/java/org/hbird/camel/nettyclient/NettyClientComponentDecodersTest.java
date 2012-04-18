@@ -11,7 +11,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.FixedLengthFrameDecoder;
-import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.junit.Test;
 
 public class NettyClientComponentDecodersTest extends CamelTestSupport {
