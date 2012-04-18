@@ -29,7 +29,7 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 	public void testNettyClient() throws Exception {
 		final Socket clientSocket = serverSocket.accept();
 
-		final byte[] rawOut = TestData.createRawTestData();
+		final byte[] rawOut = DataGenerator.createRawTestData();
 		clientSocket.getOutputStream().write(rawOut, 0, 9);
 
 		final MockEndpoint mock = getMockEndpoint("mock:result");
@@ -43,20 +43,20 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 		// Extra asserts - really checking!
 		assertEquals(rawOut.length, receivedBytes.length);
 
-		assertEquals(TestData.BYTE, receivedBytes[0]);
+		assertEquals(DataGenerator.BYTE, receivedBytes[0]);
 
 		//@formatter:off
-		final int oneReceived = receivedBytes[1] & TestData.BYTE_INT_MASK +
-				(receivedBytes[2] & TestData.BYTE_INT_MASK << 8) +
-				(receivedBytes[3] & TestData.BYTE_INT_MASK << 16) +
-				(receivedBytes[4] & TestData.BYTE_INT_MASK << 24);
-		assertEquals(TestData.INT_ONE, oneReceived);
+		final int oneReceived = receivedBytes[1] & DataGenerator.BYTE_INT_MASK +
+				(receivedBytes[2] & DataGenerator.BYTE_INT_MASK << 8) +
+				(receivedBytes[3] & DataGenerator.BYTE_INT_MASK << 16) +
+				(receivedBytes[4] & DataGenerator.BYTE_INT_MASK << 24);
+		assertEquals(DataGenerator.INT_ONE, oneReceived);
 
-		final int twoReceived = receivedBytes[5] & TestData.BYTE_INT_MASK +
-				(receivedBytes[6] & TestData.BYTE_INT_MASK << 8) +
-				(receivedBytes[7] & TestData.BYTE_INT_MASK << 16) +
-				(receivedBytes[8] & TestData.BYTE_INT_MASK << 24);
-		assertEquals(TestData.INT_TWO, twoReceived);
+		final int twoReceived = receivedBytes[5] & DataGenerator.BYTE_INT_MASK +
+				(receivedBytes[6] & DataGenerator.BYTE_INT_MASK << 8) +
+				(receivedBytes[7] & DataGenerator.BYTE_INT_MASK << 16) +
+				(receivedBytes[8] & DataGenerator.BYTE_INT_MASK << 24);
+		assertEquals(DataGenerator.INT_TWO, twoReceived);
 		//@formatter:on
 
 	}
