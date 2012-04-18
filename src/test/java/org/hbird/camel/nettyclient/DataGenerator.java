@@ -12,9 +12,9 @@ public class DataGenerator {
 	public static final int INT_TWO = 90;
 	public static final int BYTE_INT_MASK = 0xff;
 
-	//	private DataGenerator() {
-	//		// Utility class, no instantiation please!
-	//	}
+	private DataGenerator() {
+		// Utility class, no instantiation please!
+	}
 
 	public static byte[] createRawTestData() {
 		final byte[] bytes = new byte[9];
