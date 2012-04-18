@@ -28,7 +28,7 @@ import org.junit.Test;
 public class NettyClientComponentTest extends CamelTestSupport {
 
 	private ServerSocket serverSocket;
-	private static final int TEST_PORT = 4445;
+	private static final int TEST_PORT = 4444;
 
 	@Before
 	public void setUpSockets() throws Exception {
@@ -47,10 +47,10 @@ public class NettyClientComponentTest extends CamelTestSupport {
 		mock.expectedBodiesReceived(rawOut);
 		assertMockEndpointsSatisfied();
 
+		// Extra asserts - really checking!
 		final Object msgBody = mock.getExchanges().get(0).getIn().getBody();
 		final byte[] receivedBytes = (byte[]) msgBody;
 
-		// Extra asserts - really checking!
 		assertEquals(rawOut.length, receivedBytes.length);
 
 		assertEquals(DataGenerator.BYTE, receivedBytes[0]);

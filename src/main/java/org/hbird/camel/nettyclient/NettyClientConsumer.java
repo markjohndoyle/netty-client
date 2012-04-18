@@ -24,6 +24,9 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.hbird.camel.nettyclient.pipelines.DefaultClientPipelineFactory;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.group.ChannelGroupFuture;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +41,14 @@ public class NettyClientConsumer extends DefaultConsumer {
 
 	private final NettyClientConfiguration configuration;
 
+	private final DefaultChannelGroup allChannels;
+
+
 	public NettyClientConsumer(final NettyClientEndpoint endpoint, final Processor processor, final NettyClientConfiguration configuration) {
 		super(endpoint, processor);
 		this.endpoint = endpoint;
 		this.configuration = configuration;
+		this.allChannels = new DefaultChannelGroup("NettyClientConsumer-" + endpoint.getEndpointUri());
 	}
 
 	@Override
@@ -54,6 +61,7 @@ public class NettyClientConsumer extends DefaultConsumer {
 			initializeTCPClientSocketCommunicationLayer();
 		}
 		else {
+			initializeUDPClientSocketCommunicationLayer();
 		}
 
 		LOG.info("Netty consumer bound to: " + configuration.getAddress());
@@ -70,7 +78,8 @@ public class NettyClientConsumer extends DefaultConsumer {
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
 
-		bootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+		final ChannelFuture channel = bootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+		allChannels.add(channel.getChannel());
 	}
 
 	private void initializeUDPClientSocketCommunicationLayer() {
@@ -80,7 +89,20 @@ public class NettyClientConsumer extends DefaultConsumer {
 
 	@Override
 	protected void doStop() throws Exception {
+		if(LOG.isDebugEnabled()) {
+			LOG.debug("NettyClient consumer unbinding from: {}", configuration.getAddress());
+		}
+
+		// close all channels
+		if(LOG.isTraceEnabled()) {
+			LOG.trace("Closing {} channels", allChannels.size());
+		}
+		final ChannelGroupFuture future = allChannels.close();
+		future.awaitUninterruptibly();
+
 		super.doStop();
+
+		LOG.info("NettyClient consumer unbound from: " + configuration.getAddress());
 	}
 
 }
