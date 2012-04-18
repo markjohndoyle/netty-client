@@ -105,4 +105,8 @@ public class NettyClientConsumer extends DefaultConsumer {
 		LOG.info("NettyClient consumer unbound from: " + configuration.getAddress());
 	}
 
+	public NettyClientConfiguration getConfiguration() {
+		return configuration;
+	}
+
 }
