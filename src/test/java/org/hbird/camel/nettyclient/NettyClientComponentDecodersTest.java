@@ -10,6 +10,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
+import org.jboss.netty.handler.codec.frame.FixedLengthFrameDecoder;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.junit.Test;
 
@@ -65,7 +66,7 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 	protected JndiRegistry createRegistry() throws Exception {
 		final JndiRegistry reg = super.createRegistry();
 
-		final LengthFieldBasedFrameDecoder lengthDecoder = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+		final FixedLengthFrameDecoder lengthDecoder = new FixedLengthFrameDecoder(DataGenerator.createRawTestData().length);
 		reg.bind("lengthDecoder", lengthDecoder);
 
 		final List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
