@@ -17,11 +17,13 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 
 	private ServerSocket serverSocket;
 
-	public static final int TEST_PORT = 4444;
+	private int testPort = 0;
 
 	@Override
 	public void doPreSetup() throws Exception {
-		serverSocket = new ServerSocket(TEST_PORT);
+		serverSocket = new ServerSocket(testPort);
+		testPort = serverSocket.getLocalPort();
+		System.out.println("local port: " + testPort);
 	}
 
 	@Test
@@ -80,7 +82,7 @@ public class NettyClientComponentDecodersTest extends CamelTestSupport {
 		return new RouteBuilder() {
 			@Override
 			public void configure() {
-				from("nettyclient:tcp://localhost:" + TEST_PORT +"?decoders=#lengthDecoder").to("mock:result");
+				from("nettyclient:tcp://localhost:" + testPort +"?decoders=#lengthDecoder").to("mock:result");
 			}
 		};
 	}

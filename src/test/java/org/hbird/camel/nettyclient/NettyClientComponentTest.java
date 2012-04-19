@@ -11,11 +11,13 @@ import org.junit.Test;
 public class NettyClientComponentTest extends CamelTestSupport {
 
 	private ServerSocket serverSocket;
-	private static final int TEST_PORT = 4444;
+	private int testPort = 0;
 
 	@Override
 	public void doPreSetup() throws Exception {
-		serverSocket = new ServerSocket(TEST_PORT);
+		serverSocket = new ServerSocket(testPort);
+		testPort = serverSocket.getLocalPort();
+		System.out.println("client local port: " + testPort);
 	}
 
 	@Test
@@ -59,7 +61,7 @@ public class NettyClientComponentTest extends CamelTestSupport {
 		return new RouteBuilder() {
 			@Override
 			public void configure() {
-				from("nettyclient:tcp://localhost:" + TEST_PORT).to("mock:result");
+				from("nettyclient:tcp://localhost:" + testPort).to("mock:result");
 			}
 		};
 	}
